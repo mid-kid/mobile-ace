@@ -31,6 +31,9 @@ Mail:
     call $22D1  ; CopyWarpData.skip+1
     ld a, $25
     ld hl, $6C38  ; FallIntoMapScript
+    call $261F  ; CallScript
+    pop hl
+    ret
 
 .warp_dest
     map_id MOBILE_BATTLE_ROOM
