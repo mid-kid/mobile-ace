@@ -1,0 +1,6 @@
+[submodule "rgbbin"]
+	path = rgbbin
+	url = https://github.com/zzazzdzz/rgbbin
+[submodule "pokecrystal"]
+	path = pokecrystal
+	url = https://github.com/pret/pokecrystal
