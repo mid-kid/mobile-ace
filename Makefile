@@ -1,7 +1,7 @@
 RGBASM ?= rgbasm
 PYTHON3 ?= python3
 
-MAILS := crystal_us_trade crystal_us_battle
+MAILS := crystal_us_trade crystal_us_battle crystal_us_battle_setup
 
 .PHONY: all
 all: $(addsuffix .bin, $(MAILS))

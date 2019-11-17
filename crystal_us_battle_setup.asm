@@ -1,6 +1,5 @@
 INCLUDE "charmap.asm"
 INCLUDE "macros/enum.asm"
-INCLUDE "macros/data.asm"
 INCLUDE "macros/scripts/maps.asm"
 INCLUDE "constants/gfx_constants.asm"
 INCLUDE "constants/text_constants.asm"
@@ -19,9 +18,9 @@ wTempMailSpecies RB 1
 wTempMailType RB 1
 wTempMailEnd EQU _RS
 
-wScriptStackSize EQU $D43C
+hTransferVirtualOAM EQU $FF80
 
-SECTION "crystal_us_trade", ROM0[wTempMail]
+SECTION "crystal_us_battle_setup", ROM0[wTempMail]
 Mail:
     db $15, $0A, $C0, $00  ; Set up ACE from RunMobileScript
     ; Generates the following at $CD52:
@@ -33,26 +32,25 @@ Mail:
     push bc
     push af
 
-    ld a, 1
-    ld c, a
-    ld hl, .warp_dest
-    call $22D1  ; CopyWarpData.skip+1
+    ld a, $18
+    ldh [hTransferVirtualOAM + 0], a
+    ld a, $6B
+    ldh [hTransferVirtualOAM + 1], a
 
-    ld hl, .script_stack
-    ld de, wScriptStackSize
+    ld hl, .hook
+    ld de, $FFED
     jp $1C73  ; CopyMenuData+13 (CopyBytes bc=$10, pop all regs)
 
-.warp_dest
-    map_id MOBILE_TRADE_ROOM
-
-.script_stack
-    db 1
-    dbw $25, $6C38  ; FallIntoMapScript
+.hook
+    ld a, $C4
+    ld hl, $CD2A
+    set 5, [hl]
+    db $18, $8c  ; jr $FF82
 
 rept (wTempMailAuthor - wTempMail) - (@ - Mail)
     db "@"
 endr
-    db "MT@"
+    db "MBSetup@"
 
 rept (wTempMailAuthorNationaity - wTempMail) - (@ - Mail)
     db "@"
