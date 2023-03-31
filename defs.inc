@@ -11,8 +11,9 @@ DEF wTempMailEnd EQU _RS
 
 DEF CopyMenuData EQU $1C66
 DEF CopyWarpData__skip EQU $22D0
+DEF CopyName2 EQU $30D9
 DEF wScriptStackSize EQU $D43C
-DEF hTransferVirtualOAM EQU $FF80
+DEF hTransferShadowOAM EQU $FF80
 
 DEF MobileBattleRoomConsoleScript__one___BANK EQU $64
 DEF MobileBattleRoomConsoleScript__one_ EQU $75F4
@@ -29,4 +30,9 @@ MACRO pad
 rept \1 - @
     db "@"
 endr
+ENDM
+
+MACRO link_ldhl
+    ld h, HIGH(\1)
+    ld l, LOW(\1)
 ENDM

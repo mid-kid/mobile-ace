@@ -22,6 +22,7 @@ crystal_us.bin:
 
 %.bin: %.o
 	$(RGBLINK) -x -o $@ $^
+	@./scan_illegal.sh $@ || { rm -f $@; exit 1; }
 
 %.o: %.asm
 	$(RGBASM) -I pokecrystal -o $@ $<

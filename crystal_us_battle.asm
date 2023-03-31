@@ -28,10 +28,10 @@ Mail:
     ; Set up the warp
     ld a, 1  ; Dest warp ID
     ld c, a
-    ld hl, .warp_dest
+    link_ldhl .warp_dest
     call CopyWarpData__skip+1
 
-    ld hl, .script_stack
+    link_ldhl .script_stack
     ld de, wScriptStackSize
     jp CopyMenuData+13  ; CopyBytes bc=$10, pop all regs
 
@@ -57,12 +57,6 @@ Mail:
 
     ; Save the game, set up the required environment to battle (including wLinkMode)
     dbl LinkReceptionistScript_Battle__Mobile_TrySave
-
-;; wTempMailAuthorNationaity
-    ;pad wTempMailAuthorNationaity
-    ;db "@@"  ; Author Nationality
-    ;dw 0  ; Author ID
-    ;db 0  ; Author Species
 
 ; wTempMailType
     pad wTempMailType

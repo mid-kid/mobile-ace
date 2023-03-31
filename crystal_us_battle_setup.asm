@@ -1,4 +1,5 @@
 INCLUDE "charmap.asm"
+INCLUDE "macros/data.asm"
 INCLUDE "macros/const.asm"
 INCLUDE "macros/gfx.asm"
 INCLUDE "constants/gfx_constants.asm"
@@ -17,41 +18,48 @@ Mail:
     db $15, $0A, $C0, $00  ; Set up ACE from RunMobileScript
     ; Generates the following at $CD52:
     ; ld l, $C5
-    ; nop
+    ; ret
     ; ret nz
 
-    push de
-    push bc
-    push af
+    di
 
     ld a, $18  ; jr n8
-    ldh [hTransferVirtualOAM + 0], a
-    ld a, hook_ram - (hTransferVirtualOAM + 2)
-    ldh [hTransferVirtualOAM + 1], a
+    ldh [hTransferShadowOAM + 0], a
+    ld a, hook_ram - (hTransferShadowOAM + 2)
+    ldh [hTransferShadowOAM + 1], a
 
-    ld hl, .hook
-    ld de, hook_ram
-    jp CopyMenuData+13  ; CopyBytes bc=$10, pop all regs
+    ld h, e  ; $FF
+    ld l, LOW(hook_ram)
+    ld de, .hook
 
+    add $21 - (hook_ram - (hTransferShadowOAM + 2)) ; load $21 into a
+    ld [hli], a  ; write "ld hl, n16" instruction
+    jr .code2
+
+; code to jump to from hTransferShadowOAM
 .hook
     ; fix this value in ram
-    ld hl, $CD2A
+    dw $CD2A  ; Fixed into ld hl, n16 opcode
     set 5, [hl]
 
     ; return to hooked code
     ld a, $C4  ; patched code
     db $18  ; jr n8
-    db hTransferVirtualOAM + 2 - (hook_ram + (@ - .hook) + 1)
+    db hTransferShadowOAM + 2 - ((@ + 1) - .hook + hook_ram + 1)
+
+    db "@"
 
 ; wTempMailAuthor
     pad wTempMailAuthor
     db "MBSetup@"
 
-; wTempMailAuthorNationaity
-    pad wTempMailAuthorNationaity
-    db "@@"  ; Author Nationality
-    dw 0  ; Author ID
-    db 0  ; Author Species
+.code2
+    call CopyName2
+    dec de
+    reti
+
+; wTempMailType
+    pad wTempMailType
     db BLUESKY_MAIL  ; Mail Type
 
     pad wTempMailEnd
