@@ -1,14 +1,24 @@
 RGBASM ?= rgbasm
 RGBLINK ?= rgblink
 
-MAILS := crystal_us_trade crystal_us_battle crystal_us_battle_setup
+MAILS := \
+	crystal_us.bin \
+	crystal_us_trade.bin \
+	crystal_us_battle_setup.bin \
+	crystal_us_battle.bin
 
 .PHONY: all
-all: $(addsuffix .bin, $(MAILS))
+all: $(MAILS)
 
 .PHONY: clean
 clean:
-	rm -f $(addsuffix .bin, $(MAILS)) $(addsuffix .o, $(MAILS))
+	rm -f $(MAILS) $(MAILS:.bin=.o)
+
+crystal_us.bin: crystal_us_trade.bin
+crystal_us.bin: crystal_us_battle_setup.bin
+crystal_us.bin: crystal_us_battle.bin
+crystal_us.bin:
+	./create_mailbox.sh $^ > $@
 
 %.bin: %.o
 	$(RGBLINK) -x -o $@ $^
