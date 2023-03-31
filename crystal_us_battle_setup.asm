@@ -9,6 +9,8 @@ INCLUDE "constants/item_constants.asm"
 
 INCLUDE "defs.inc"
 
+DEF hook_ram EQU $FFED
+
 SECTION "crystal_us_battle_setup", ROM0
 LOAD "crystal_us_battle_setup ram", WRAMX[wTempMail]
 Mail:
@@ -24,18 +26,22 @@ Mail:
 
     ld a, $18  ; jr n8
     ldh [hTransferVirtualOAM + 0], a
-    ld a, $6B  ; $FFED
+    ld a, hook_ram - (hTransferVirtualOAM + 2)
     ldh [hTransferVirtualOAM + 1], a
 
     ld hl, .hook
-    ld de, $FFED
+    ld de, hook_ram
     jp CopyMenuData+13  ; CopyBytes bc=$10, pop all regs
 
 .hook
-    ld a, $C4
+    ; fix this value in ram
     ld hl, $CD2A
     set 5, [hl]
-    db $18, $8c  ; jr $FF82
+
+    ; return to hooked code
+    ld a, $C4  ; patched code
+    db $18  ; jr n8
+    db hTransferVirtualOAM + 2 - (hook_ram + (@ - .hook) + 1)
 
 ; wTempMailAuthor
     pad wTempMailAuthor
