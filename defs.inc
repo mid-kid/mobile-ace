@@ -19,6 +19,8 @@ DEF MobileBattleRoomConsoleScript__one___BANK EQU $64
 DEF MobileBattleRoomConsoleScript__one_ EQU $75F4
 DEF FallIntoMapScript__BANK EQU $25
 DEF FallIntoMapScript EQU $6C38
+DEF LinkReceptionistScript_Trade__Mobile_TrySave__BANK EQU $64
+DEF LinkReceptionistScript_Trade__Mobile_TrySave EQU $692B
 DEF LinkReceptionistScript_Battle__Mobile_TrySave__BANK EQU $64
 DEF LinkReceptionistScript_Battle__Mobile_TrySave EQU $69E6
 

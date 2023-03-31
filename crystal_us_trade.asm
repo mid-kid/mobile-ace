@@ -37,19 +37,17 @@ Mail:
 .warp_dest
     map_id MOBILE_TRADE_ROOM
 
-.script_stack
-    db 1
-    dbl FallIntoMapScript
-
 ; wTempMailAuthor
     pad wTempMailAuthor
     db "MT@"
 
-; wTempMailAuthorNationaity
-    pad wTempMailAuthorNationaity
-    db "@@"  ; Author Nationality
-    dw 0  ; Author ID
-    db 0  ; Author Species
+.script_stack
+    db 2
+    dbl FallIntoMapScript
+    dbl LinkReceptionistScript_Trade__Mobile_TrySave
+
+; wTempMailType
+    pad wTempMailType
     db BLUESKY_MAIL  ; Mail Type
 
     pad wTempMailEnd

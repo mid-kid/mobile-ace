@@ -12,3 +12,9 @@ if printf '%s\n' "$body" | grep --color=always -w 21; then
     echo "Illegal bytes found in body!"
     exit 1
 fi
+
+set -- $meta
+if [ "$9" = 84 ]; then
+    echo "Invalid nationality, mail will be translated!"
+    exit 1
+fi
