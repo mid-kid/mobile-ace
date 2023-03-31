@@ -1,26 +1,16 @@
 INCLUDE "charmap.asm"
-INCLUDE "macros/enum.asm"
-INCLUDE "macros/scripts/maps.asm"
+INCLUDE "macros/const.asm"
+INCLUDE "macros/gfx.asm"
 INCLUDE "constants/gfx_constants.asm"
+INCLUDE "constants/item_data_constants.asm"
+INCLUDE "constants/move_constants.asm"
 INCLUDE "constants/text_constants.asm"
 INCLUDE "constants/item_constants.asm"
-INCLUDE "constants/item_data_constants.asm"
-INCLUDE "constants/map_constants.asm"
 
-RSSET $D002
-wTempMail EQU _RS
-wTempMailMessage RB MAIL_MSG_LENGTH
-wTempMailMessageEnd RB 1
-wTempMailAuthor RB PLAYER_NAME_LENGTH
-wTempMailAuthorNationaity RB 2
-wTempMailAuthorID RW 1
-wTempMailSpecies RB 1
-wTempMailType RB 1
-wTempMailEnd EQU _RS
+INCLUDE "defs.inc"
 
-hTransferVirtualOAM EQU $FF80
-
-SECTION "crystal_us_battle_setup", ROM0[wTempMail]
+SECTION "crystal_us_battle_setup", ROM0
+LOAD "crystal_us_battle_setup ram", WRAMX[wTempMail]
 Mail:
     db $15, $0A, $C0, $00  ; Set up ACE from RunMobileScript
     ; Generates the following at $CD52:
@@ -32,14 +22,14 @@ Mail:
     push bc
     push af
 
-    ld a, $18
+    ld a, $18  ; jr n8
     ldh [hTransferVirtualOAM + 0], a
-    ld a, $6B
+    ld a, $6B  ; $FFED
     ldh [hTransferVirtualOAM + 1], a
 
     ld hl, .hook
     ld de, $FFED
-    jp $1C73  ; CopyMenuData+13 (CopyBytes bc=$10, pop all regs)
+    jp CopyMenuData+13  ; CopyBytes bc=$10, pop all regs
 
 .hook
     ld a, $C4
@@ -47,17 +37,16 @@ Mail:
     set 5, [hl]
     db $18, $8c  ; jr $FF82
 
-rept (wTempMailAuthor - wTempMail) - (@ - Mail)
-    db "@"
-endr
+; wTempMailAuthor
+    pad wTempMailAuthor
     db "MBSetup@"
 
-rept (wTempMailAuthorNationaity - wTempMail) - (@ - Mail)
-    db "@"
-endr
+; wTempMailAuthorNationaity
+    pad wTempMailAuthorNationaity
     db "@@"  ; Author Nationality
     dw 0  ; Author ID
     db 0  ; Author Species
     db BLUESKY_MAIL  ; Mail Type
 
-    ds (wTempMailEnd - wTempMail) - (@ - Mail)
+    pad wTempMailEnd
+ENDL

@@ -1,5 +1,5 @@
 RGBASM ?= rgbasm
-PYTHON3 ?= python3
+RGBLINK ?= rgblink
 
 MAILS := crystal_us_trade crystal_us_battle crystal_us_battle_setup
 
@@ -11,9 +11,7 @@ clean:
 	rm -f $(addsuffix .bin, $(MAILS)) $(addsuffix .o, $(MAILS))
 
 %.bin: %.o
-	@echo "$(PYTHON3) -m rgbbin $<"
-	@(cd rgbbin; $(PYTHON3) -m rgbbin -o ../ ../$<)
+	$(RGBLINK) -x -o $@ $^
 
 %.o: %.asm
-	@echo "$(RGBASM) -o $@ $<"
-	@(cd pokecrystal; $(RGBASM) -o ../$@ ../$<)
+	$(RGBASM) -I pokecrystal -o $@ $<
